@@ -4,7 +4,7 @@ import com.szincho.kimhyungjunproject.Restaurant.Entity.Restaurant;
 
 // @Entity
 public class Food {
-    Restaurant restaurant;
+    int id;
     String name;
     long price;
     Category category;
