@@ -1,13 +1,19 @@
 package com.szincho.kimhyungjunproject.Food.Entity;
 
-import com.szincho.kimhyungjunproject.Restaurant.Entity.Restaurant;
+import lombok.Getter;
 
-// @Entity
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+@Getter
 public class Food {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     String name;
     long price;
-    Category category;
-    Option option;
     String description;
 }
