@@ -12,11 +12,16 @@ import java.util.List;
 @RequestMapping("/foods")
 public class FoodController {
 
+    private final FoodService service;
+
     @Autowired
-    FoodService service;
+    public FoodController(FoodService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public List<Food> getAllFoods() {
         return service.getAllFoods();
     }
+
 }

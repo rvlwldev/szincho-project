@@ -9,8 +9,12 @@ import java.util.List;
 @Service
 public class FoodService {
 
-    @Autowired
     FoodRepository repo;
+
+    @Autowired
+    public FoodService (FoodRepository repo) {
+        this.repo = repo;
+    }
 
     public List<Food> getAllFoods() {
         return repo.findAll();
