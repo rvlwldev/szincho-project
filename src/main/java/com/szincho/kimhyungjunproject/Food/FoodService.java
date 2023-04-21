@@ -25,4 +25,8 @@ public class FoodService {
                 .orElse(new Food());
     }
 
+    public Food saveFood(Food food) {
+        return repo.save(food);
+    }
+
 }
