@@ -20,4 +20,9 @@ public class FoodService {
         return repo.findAll();
     }
 
+    public Food getFood(int id) {
+        return repo.findById(id)
+                .orElse(new Food());
+    }
+
 }
