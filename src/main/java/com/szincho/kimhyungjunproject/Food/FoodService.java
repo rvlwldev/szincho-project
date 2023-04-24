@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FoodService {
@@ -13,7 +14,7 @@ public class FoodService {
     FoodRepository repo;
 
     @Autowired
-    public FoodService (FoodRepository repo) {
+    public FoodService(FoodRepository repo) {
         this.repo = repo;
     }
 
@@ -34,6 +35,15 @@ public class FoodService {
     public Food updateFood(int id, Food target) {
         Food updatedFood = getFood(id).updateFields(target);
         return repo.save(updatedFood);
+    }
+
+    public boolean deleteFood(int id) {
+        Optional<Food> food = repo.findById(id);
+
+        if (food.isEmpty()) return false;
+
+        repo.deleteById(id);
+        return true;
     }
 
 }

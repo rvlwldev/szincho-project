@@ -25,7 +25,7 @@ public class FoodController {
         return service.getAllFoods();
     }
 
-    @GetMapping ("/{id}")
+    @GetMapping("/{id}")
     public Food getFood(@PathVariable("id") int id) {
         return service.getFood(id);
     }
@@ -38,12 +38,20 @@ public class FoodController {
         return ResponseEntity.status(HttpStatus.CREATED).body(food);
     }
 
-    @PatchMapping ("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Food> updateFood(@PathVariable("id") int id, @RequestBody FoodDTO dto) {
         Food food = new Food(dto);
         food = service.updateFood(id, food);
 
         return ResponseEntity.status(HttpStatus.OK).body(food);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFood(@PathVariable("id") int id) {
+        if (service.deleteFood(id))
+            return ResponseEntity.noContent().build();
+        else
+            return ResponseEntity.notFound().build();
     }
 
 }
