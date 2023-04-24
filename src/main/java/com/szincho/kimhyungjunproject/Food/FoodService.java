@@ -4,6 +4,7 @@ import com.szincho.kimhyungjunproject.Food.Entity.Food;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -27,6 +28,12 @@ public class FoodService {
 
     public Food saveFood(Food food) {
         return repo.save(food);
+    }
+
+    @Transactional
+    public Food updateFood(int id, Food target) {
+        Food updatedFood = getFood(id).updateFields(target);
+        return repo.save(updatedFood);
     }
 
 }

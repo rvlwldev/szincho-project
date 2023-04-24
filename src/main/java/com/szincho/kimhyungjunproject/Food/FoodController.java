@@ -38,4 +38,12 @@ public class FoodController {
         return ResponseEntity.status(HttpStatus.CREATED).body(food);
     }
 
+    @PatchMapping ("/{id}")
+    public ResponseEntity<Food> updateFood(@PathVariable("id") int id, @RequestBody FoodDTO dto) {
+        Food food = new Food(dto);
+        food = service.updateFood(id, food);
+
+        return ResponseEntity.status(HttpStatus.OK).body(food);
+    }
+
 }
