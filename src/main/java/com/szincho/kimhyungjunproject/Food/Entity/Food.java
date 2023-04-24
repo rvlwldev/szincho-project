@@ -16,19 +16,41 @@ import javax.validation.constraints.NotNull;
 public class Food {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    private int id;
 
     @NotNull(message = "음식이름은 필수값 입니다.")
-    String name;
+    private String name;
 
     @NotNull(message = "가격은 필수값 입니다.")
-    long price;
+    private long price;
 
-    String description;
+    private String description;
 
-    public Food (FoodDTO dto){
+    public Food(FoodDTO dto) {
         this.name = dto.getName();
         this.price = dto.getPrice();
         this.description = dto.getDescription();
     }
+
+    public Food updateFields(Food target) {
+        setName(target.getName());
+        setPrice(target.getPrice());
+        setDescription(target.getDescription());
+
+        return this;
+    }
+
+    private void setName(String name) {
+        if (name != null) this.name = name;
+    }
+
+    private void setPrice(long price) {
+        if (price > 0) this.price = price;
+    }
+
+    private void setDescription(String description) {
+        if (description != null) this.description = description;
+    }
+
+
 }
