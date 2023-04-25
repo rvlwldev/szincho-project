@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/foods")
@@ -26,8 +27,11 @@ public class FoodController {
     }
 
     @GetMapping("/{id}")
-    public Food getFood(@PathVariable("id") int id) {
-        return service.getFood(id);
+    public ResponseEntity<Food> getFood(@PathVariable("id") int id) {
+        Optional<Food> food = service.getFood(id);
+
+        return food.map(result -> ResponseEntity.ok().body(result))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -41,9 +45,10 @@ public class FoodController {
     @PatchMapping("/{id}")
     public ResponseEntity<Food> updateFood(@PathVariable("id") int id, @RequestBody FoodDTO dto) {
         Food food = new Food(dto);
-        food = service.updateFood(id, food);
 
-        return ResponseEntity.status(HttpStatus.OK).body(food);
+        return service.updateFood(id, food)
+                .map(result -> ResponseEntity.ok().body(result))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

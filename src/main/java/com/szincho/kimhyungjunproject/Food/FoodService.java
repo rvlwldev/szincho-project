@@ -22,9 +22,8 @@ public class FoodService {
         return repo.findAll();
     }
 
-    public Food getFood(int id) {
-        return repo.findById(id)
-                .orElse(new Food());
+    public Optional<Food> getFood(int id) {
+        return repo.findById(id);
     }
 
     public Food saveFood(Food food) {
@@ -32,14 +31,13 @@ public class FoodService {
     }
 
     @Transactional
-    public Food updateFood(int id, Food target) {
-        Food updatedFood = getFood(id).updateFields(target);
-        return repo.save(updatedFood);
+    public Optional<Food> updateFood(int id, Food target) {
+        return getFood(id).map(origin -> origin.updateFields(target));
     }
 
+    @Transactional
     public boolean deleteFood(int id) {
         Optional<Food> food = repo.findById(id);
-
         if (food.isEmpty()) return false;
 
         repo.deleteById(id);
