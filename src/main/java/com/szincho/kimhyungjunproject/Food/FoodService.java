@@ -2,6 +2,7 @@ package com.szincho.kimhyungjunproject.Food;
 
 import com.szincho.kimhyungjunproject.Food.DTO.FoodDTO;
 import com.szincho.kimhyungjunproject.Food.Entity.Food;
+import com.szincho.kimhyungjunproject.Food.Exception.FoodNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,12 @@ public class FoodService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<FoodDTO> getFood(int id) {
-        return repo.findById(id).map(mapper::toDto);
+    public Optional<FoodDTO> getFood(int id) throws FoodNotFoundException {
+        Optional<Food> food = repo.findById(id);
+
+        if(food.isEmpty()) throw new FoodNotFoundException(id);
+
+        return food.map(mapper::toDto);
     }
 
     public FoodDTO saveFood(Food food) {
@@ -36,18 +41,20 @@ public class FoodService {
     }
 
     @Transactional
-    public Optional<FoodDTO> updateFood(int id, Food target) {
-        return getFood(id).map(selected -> new FoodDTO(target.getName(), target.getPrice(), target.getDescription()))
-                .map(updated -> saveFood(mapper.toEntity(updated)));
+    public Optional<FoodDTO> updateFood(int id, Food target) throws FoodNotFoundException {
+        if(getFood(id).isEmpty()) throw new FoodNotFoundException(id);
+
+        target = new Food(id, target.getName(), target.getPrice(), target.getDescription());
+
+        return Optional.of(saveFood(target));
     }
 
     @Transactional
-    public boolean deleteFood(int id) {
+    public void deleteFood(int id) throws FoodNotFoundException {
         Optional<Food> food = repo.findById(id);
-        if (food.isEmpty()) return false;
+        if (food.isEmpty()) throw new FoodNotFoundException(id);
 
         repo.deleteById(id);
-        return true;
     }
 
 }

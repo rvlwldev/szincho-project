@@ -2,6 +2,7 @@ package com.szincho.kimhyungjunproject.Food;
 
 import com.szincho.kimhyungjunproject.Food.DTO.FoodDTO;
 import com.szincho.kimhyungjunproject.Food.Entity.Food;
+import com.szincho.kimhyungjunproject.Food.Exception.FoodNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class FoodController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FoodDTO> getFood(@PathVariable("id") int id) {
+    public ResponseEntity<FoodDTO> getFood(@PathVariable("id") int id) throws FoodNotFoundException {
         Optional<FoodDTO> food = service.getFood(id);
 
         return food.map(result -> ResponseEntity.ok().body(result))
@@ -44,18 +45,16 @@ public class FoodController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<FoodDTO> updateFood(@PathVariable("id") int id, @RequestBody FoodDTO dto) {
+    public ResponseEntity<FoodDTO> updateFood(@PathVariable("id") int id, @RequestBody FoodDTO dto) throws FoodNotFoundException {
         return service.updateFood(id, mapper.toEntity(dto))
                 .map(result -> ResponseEntity.ok().body(result))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFood(@PathVariable("id") int id) {
-        if (service.deleteFood(id))
-            return ResponseEntity.noContent().build();
-        else
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteFood(@PathVariable("id") int id) throws FoodNotFoundException {
+        service.deleteFood(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
