@@ -15,38 +15,37 @@ import java.util.Optional;
 public class FoodController {
 
     private final FoodService service;
+    private final FoodMapper mapper;
 
     @Autowired
-    public FoodController(FoodService service) {
+    public FoodController(FoodService service, FoodMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
-    public List<Food> getAllFoods() {
+    public List<FoodDTO> getAllFoods() {
         return service.getAllFoods();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Food> getFood(@PathVariable("id") int id) {
-        Optional<Food> food = service.getFood(id);
+    public ResponseEntity<FoodDTO> getFood(@PathVariable("id") int id) {
+        Optional<FoodDTO> food = service.getFood(id);
 
         return food.map(result -> ResponseEntity.ok().body(result))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Food> createFood(@RequestBody FoodDTO dto) {
-        Food food = new Food(dto);
-        food = service.saveFood(food);
+    public ResponseEntity<FoodDTO> createFood(@RequestBody FoodDTO dto) {
+        dto = service.saveFood(mapper.MAPPER.toEntity(dto));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(food);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Food> updateFood(@PathVariable("id") int id, @RequestBody FoodDTO dto) {
-        Food food = new Food(dto);
-
-        return service.updateFood(id, food)
+    public ResponseEntity<FoodDTO> updateFood(@PathVariable("id") int id, @RequestBody FoodDTO dto) {
+        return service.updateFood(id, mapper.toEntity(dto))
                 .map(result -> ResponseEntity.ok().body(result))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
