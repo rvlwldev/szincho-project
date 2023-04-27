@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -42,7 +41,7 @@ public class FoodController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<FoodDTO> updateFood(@PathVariable("id") int id, @RequestBody @NotNull FoodDTO dto) throws FoodNotFoundException {
+    public ResponseEntity<FoodDTO> updateFood(@PathVariable("id") int id, @RequestBody @Valid FoodDTO dto) throws FoodNotFoundException {
         FoodDTO updated = service.updateFood(id, mapper.toEntity(dto));
         return ResponseEntity.ok().body(updated);
     }
