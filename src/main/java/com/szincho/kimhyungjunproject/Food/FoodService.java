@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,12 +27,9 @@ public class FoodService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<FoodDTO> getFood(int id) throws FoodNotFoundException {
-        Optional<Food> food = repo.findById(id);
-
-        if(food.isEmpty()) throw new FoodNotFoundException(id);
-
-        return food.map(mapper::toDto);
+    public FoodDTO getFood(int id) throws FoodNotFoundException {
+        validateFoodExists(id);
+        return mapper.toDto(repo.findById(id).get());
     }
 
     public FoodDTO saveFood(Food food) {
@@ -41,20 +37,23 @@ public class FoodService {
     }
 
     @Transactional
-    public Optional<FoodDTO> updateFood(int id, Food target) throws FoodNotFoundException {
-        if(getFood(id).isEmpty()) throw new FoodNotFoundException(id);
+    public FoodDTO updateFood(int id, Food target) throws FoodNotFoundException {
+        validateFoodExists(id);
 
         target = new Food(id, target.getName(), target.getPrice(), target.getDescription());
 
-        return Optional.of(saveFood(target));
+        return saveFood(target);
     }
 
     @Transactional
     public void deleteFood(int id) throws FoodNotFoundException {
-        Optional<Food> food = repo.findById(id);
-        if (food.isEmpty()) throw new FoodNotFoundException(id);
+        validateFoodExists(id);
 
         repo.deleteById(id);
+    }
+
+    private void validateFoodExists(int id) throws FoodNotFoundException {
+        if (!repo.existsById(id)) throw new FoodNotFoundException(id);
     }
 
 }
