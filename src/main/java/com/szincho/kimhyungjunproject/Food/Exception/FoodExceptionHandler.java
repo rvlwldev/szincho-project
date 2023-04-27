@@ -2,10 +2,15 @@ package com.szincho.kimhyungjunproject.Food.Exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @ControllerAdvice
 public class FoodExceptionHandler {
@@ -17,4 +22,18 @@ public class FoodExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleOfRequestValidation(MethodArgumentNotValidException e) {
+        HashMap<String, HashMap<String, String>> body = new HashMap<>();
+
+        HashMap<String, String> errorMap = new HashMap<>();
+        for (FieldError error : e.getBindingResult().getFieldErrors()) {
+            errorMap.put(error.getField(), error.getDefaultMessage());
+        }
+        body.put("error", errorMap);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
 }

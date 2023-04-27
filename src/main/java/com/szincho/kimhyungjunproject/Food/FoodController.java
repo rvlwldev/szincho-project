@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -33,14 +35,14 @@ public class FoodController {
     }
 
     @PostMapping
-    public ResponseEntity<FoodDTO> createFood(@RequestBody FoodDTO dto) {
+    public ResponseEntity<FoodDTO> createFood(@RequestBody @Valid FoodDTO dto) {
         dto = service.saveFood(mapper.toEntity(dto));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<FoodDTO> updateFood(@PathVariable("id") int id, @RequestBody FoodDTO dto) throws FoodNotFoundException {
+    public ResponseEntity<FoodDTO> updateFood(@PathVariable("id") int id, @RequestBody @NotNull FoodDTO dto) throws FoodNotFoundException {
         FoodDTO updated = service.updateFood(id, mapper.toEntity(dto));
         return ResponseEntity.ok().body(updated);
     }
