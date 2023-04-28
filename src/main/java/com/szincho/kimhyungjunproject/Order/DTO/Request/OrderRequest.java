@@ -1,4 +1,4 @@
-package com.szincho.kimhyungjunproject.Order.DTO;
+package com.szincho.kimhyungjunproject.Order.DTO.Request;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDTO {
+public class OrderRequest {
     String destination;
-    List<Integer> foods;
+    List<OrderedFoodRequest> foods;
 }
