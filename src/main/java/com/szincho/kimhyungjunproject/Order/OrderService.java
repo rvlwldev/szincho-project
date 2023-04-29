@@ -54,6 +54,8 @@ public class OrderService {
         Sort sort = Sort.by("orderTime").descending();
 
         return orderRepo.findAll(sort).stream()
+                .filter(order -> !order.isCanceled())
+                .filter(Order::isArrived)
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
