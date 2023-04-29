@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -38,6 +39,11 @@ public class OrderController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
+    }
+
+    @GetMapping
+    public List<OrderResponse> getAllOrderHistory() {
+        return service.getAllOrderHistoryDESC();
     }
 
     @DeleteMapping("/{id}")

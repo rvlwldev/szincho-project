@@ -9,6 +9,7 @@ import com.szincho.kimhyungjunproject.Order.DTO.Exception.OrderNotFoundException
 import com.szincho.kimhyungjunproject.Order.DTO.Mapper.OrderResponseMapper;
 import com.szincho.kimhyungjunproject.Order.DTO.Response.OrderResponse;
 import com.szincho.kimhyungjunproject.Order.Entity.Order;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -43,6 +44,14 @@ public class OrderService {
         Set<Integer> orderedFoodIds = CountWithFoodMap.keySet();
 
         if (selectedFoods.size() != orderedFoodIds.size()) throw new FoodNotFoundException();
+    }
+
+    public List<OrderResponse> getAllOrderHistoryDESC() {
+        Sort sort = Sort.by("orderTime").descending();
+
+        return orderRepo.findAll(sort).stream()
+                .map(OrderResponseMapper.MAPPER::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
