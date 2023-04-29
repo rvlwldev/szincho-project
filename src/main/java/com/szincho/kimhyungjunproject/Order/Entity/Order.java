@@ -6,11 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.util.Date;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -18,16 +14,15 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "orders")
 public class Order {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
     String destination;
+
+    @ManyToMany
+    @JoinColumn(name = "food_id")
     List<Food> foods;
-    long totalPrice;
-    Date orderTime;
-    boolean isDeparted;
-    boolean isArrived;
 }
