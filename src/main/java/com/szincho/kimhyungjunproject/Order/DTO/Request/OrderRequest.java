@@ -1,15 +1,17 @@
 package com.szincho.kimhyungjunproject.Order.DTO.Request;
 
-import lombok.*;
+import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class OrderRequest {
+    @NotNull(message = "배달주소를 입력해주세요.")
     String destination;
-    List<OrderedFoodRequest> foods;
+
+    @NotNull(message = "주문 음식을 골라주세요.")
+    @NotEmpty(message = "주문 음식을 골라주세요.")
+    List<OrderedFoodsRequest> foods;
 }
