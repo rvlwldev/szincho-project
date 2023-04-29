@@ -9,6 +9,7 @@ import com.szincho.kimhyungjunproject.Order.DTO.Exception.OrderNotFoundException
 import com.szincho.kimhyungjunproject.Order.DTO.Mapper.OrderResponseMapper;
 import com.szincho.kimhyungjunproject.Order.DTO.Response.OrderResponse;
 import com.szincho.kimhyungjunproject.Order.Entity.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -24,16 +25,19 @@ public class OrderService {
 
     private final OrderRepository orderRepo;
     private final FoodRepository foodRepo;
+    private final OrderResponseMapper mapper;
 
-    public OrderService(OrderRepository orderRepo, FoodRepository foodRepo) {
+    @Autowired
+    public OrderService(OrderRepository orderRepo, FoodRepository foodRepo, OrderResponseMapper mapper) {
         this.orderRepo = orderRepo;
         this.foodRepo = foodRepo;
+        this.mapper = mapper;
     }
 
     @Transactional
     public OrderResponse saveOrder(Order order, HashMap<Integer, Integer> CountWithFoodMap) throws FoodNotFoundException {
         validateOrderFoods(order, CountWithFoodMap);
-        return OrderResponseMapper.MAPPER.toDtoByCountWithFoodMap(orderRepo.save(order), CountWithFoodMap);
+        return mapper.toDtoByCountWithFoodMap(orderRepo.save(order), CountWithFoodMap);
     }
 
     private void validateOrderFoods(Order order, HashMap<Integer, Integer> CountWithFoodMap) throws FoodNotFoundException {
@@ -50,7 +54,7 @@ public class OrderService {
         Sort sort = Sort.by("orderTime").descending();
 
         return orderRepo.findAll(sort).stream()
-                .map(OrderResponseMapper.MAPPER::toDto)
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 

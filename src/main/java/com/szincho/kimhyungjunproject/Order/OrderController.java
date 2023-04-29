@@ -23,17 +23,19 @@ public class OrderController {
 
     private final OrderService service;
     private final FoodService foodService;
+    private final OrderRequestMapper mapper;
 
     @Autowired
-    public OrderController(OrderService service, FoodService foodService) {
+    public OrderController(OrderService service, FoodService foodService, OrderRequestMapper mapper) {
         this.service = service;
         this.foodService = foodService;
+        this.mapper = mapper;
     }
 
     @PostMapping
     public ResponseEntity<OrderResponse> receiveOrder(@RequestBody @Valid OrderRequest request) throws FoodNotFoundException {
-        HashMap<Integer, Integer> CountWithFoodMap = OrderRequestMapper.MAPPER.getCountWithFoodMap(request);
-        Order order = OrderRequestMapper.MAPPER.getOrderByRequestedDto(request, foodService);
+        HashMap<Integer, Integer> CountWithFoodMap = mapper.getCountWithFoodMap(request);
+        Order order = mapper.getOrderByRequestedDto(request, foodService);
 
         OrderResponse response = service.saveOrder(order, CountWithFoodMap);
 
