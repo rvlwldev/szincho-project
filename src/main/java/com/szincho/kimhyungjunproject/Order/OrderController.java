@@ -52,4 +52,16 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/depart/{id}")
+    public ResponseEntity<OrderResponse> departOrder(@PathVariable("id") long id) throws IllegalOrderException, OrderNotFoundException {
+        service.departOrder(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/arrive/{id}")
+    public ResponseEntity<OrderResponse> arriveOrder(@PathVariable("id") long id) throws IllegalOrderException, OrderNotFoundException {
+        service.arriveOrder(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

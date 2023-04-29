@@ -13,4 +13,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "  SET isCanceled = true " +
             "WHERE id = :id")
     void cancelOrder(@Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE Order " +
+            "  SET isDeparted = true " +
+            "WHERE id = :id")
+    void departOrder(@Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE Order " +
+            "  SET isArrived = true " +
+            "WHERE id = :id")
+    void arriveOrder(@Param("id") Long id);
 }

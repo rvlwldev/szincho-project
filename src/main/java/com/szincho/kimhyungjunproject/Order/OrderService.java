@@ -56,15 +56,32 @@ public class OrderService {
 
     @Transactional
     public void cancelOrder(long id) throws IllegalOrderException, OrderNotFoundException {
+        validateOrderId(id);
+        orderRepo.cancelOrder(id);
+    }
+
+    @Transactional
+    public void departOrder(long id) throws IllegalOrderException, OrderNotFoundException {
+        validateOrderId(id);
+        orderRepo.departOrder(id);
+    }
+
+    @Transactional
+    public void arriveOrder(long id) throws IllegalOrderException, OrderNotFoundException {
+        validateOrderId(id);
+        orderRepo.arriveOrder(id);
+    }
+
+
+    private void validateOrderId(long id) {
         Optional<Order> order = orderRepo.findById(id);
 
         if (order.isPresent()) {
             if (order.get().isCanceled()) throw new IllegalOrderException(OrderStatus.CANCELED.toString());
             if (order.get().isDeparted()) throw new IllegalOrderException(OrderStatus.DEPARTED.toString());
             if (order.get().isArrived()) throw new IllegalOrderException(OrderStatus.ARRIVED.toString());
-
-            orderRepo.cancelOrder(id);
-        } else throw new OrderNotFoundException();
+        }
+        else throw new OrderNotFoundException();
     }
 
 }
