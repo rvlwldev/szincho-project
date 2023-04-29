@@ -69,9 +69,13 @@ public class OrderService {
     @Transactional
     public void arriveOrder(long id) throws IllegalOrderException, OrderNotFoundException {
         validateOrderId(id);
+
+        if (!orderRepo.findById(id).get().isDeparted()) {
+            throw new IllegalOrderException(OrderStatus.NOT_ALLOWED_TO_BE_ARRIVED.toString());
+        }
+
         orderRepo.arriveOrder(id);
     }
-
 
     private void validateOrderId(long id) {
         Optional<Order> order = orderRepo.findById(id);
@@ -80,8 +84,7 @@ public class OrderService {
             if (order.get().isCanceled()) throw new IllegalOrderException(OrderStatus.CANCELED.toString());
             if (order.get().isDeparted()) throw new IllegalOrderException(OrderStatus.DEPARTED.toString());
             if (order.get().isArrived()) throw new IllegalOrderException(OrderStatus.ARRIVED.toString());
-        }
-        else throw new OrderNotFoundException();
+        } else throw new OrderNotFoundException();
     }
 
 }
