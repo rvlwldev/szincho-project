@@ -2,6 +2,8 @@ package com.szincho.kimhyungjunproject.Order;
 
 import com.szincho.kimhyungjunproject.Food.Exception.FoodNotFoundException;
 import com.szincho.kimhyungjunproject.Food.FoodService;
+import com.szincho.kimhyungjunproject.Order.DTO.Exception.IllegalOrderException;
+import com.szincho.kimhyungjunproject.Order.DTO.Exception.OrderNotFoundException;
 import com.szincho.kimhyungjunproject.Order.DTO.Mapper.OrderRequestMapper;
 import com.szincho.kimhyungjunproject.Order.DTO.Request.OrderRequest;
 import com.szincho.kimhyungjunproject.Order.DTO.Response.OrderResponse;
@@ -9,10 +11,7 @@ import com.szincho.kimhyungjunproject.Order.Entity.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -32,13 +31,19 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderResponse> receiveOrder(@RequestBody @Valid OrderRequest request) throws FoodNotFoundException {
-        HashMap<Integer, Integer>  CountWithFoodMap = OrderRequestMapper.MAPPER.getCountWithFoodMap(request);
+        HashMap<Integer, Integer> CountWithFoodMap = OrderRequestMapper.MAPPER.getCountWithFoodMap(request);
         Order order = OrderRequestMapper.MAPPER.getOrderByRequestedDto(request, foodService);
 
         OrderResponse response = service.saveOrder(order, CountWithFoodMap);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<OrderResponse> cancelOrder(@PathVariable("id") long id) throws IllegalOrderException, OrderNotFoundException {
+        service.cancelOrder(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

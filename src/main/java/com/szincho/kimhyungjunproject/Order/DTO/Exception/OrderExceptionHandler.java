@@ -24,4 +24,14 @@ public class OrderExceptionHandler {
             for (String message : body) put("error", message);
         }});
     }
+
+    @ExceptionHandler({OrderNotFoundException.class, IllegalOrderException.class})
+    public ResponseEntity<Object> handleOfInvalidOrderException(IllegalArgumentException e) {
+        HashMap<String, Object> body = new HashMap<>() {{
+            put("error", e.getMessage());
+        }};
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
 }
