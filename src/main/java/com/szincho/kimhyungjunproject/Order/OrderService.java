@@ -62,35 +62,40 @@ public class OrderService {
 
     @Transactional
     public void cancelOrder(long id) throws IllegalOrderException, OrderNotFoundException {
-        validateOrderId(id);
+        Order order = validateOrderIdAndGetOrder(id).get();
+
+        if (order.isDeparted() && !order.isArrived()) throw new IllegalOrderException(OrderStatus.DEPARTED.toString());
+
         orderRepo.cancelOrder(id);
     }
 
     @Transactional
     public void departOrder(long id) throws IllegalOrderException, OrderNotFoundException {
-        validateOrderId(id);
+        Order order = validateOrderIdAndGetOrder(id).get();
+
+        if (order.isDeparted()) throw new IllegalOrderException(OrderStatus.DEPARTED.toString());
+        if (order.isArrived()) throw new IllegalOrderException(OrderStatus.ARRIVED.toString());
+
         orderRepo.departOrder(id);
     }
 
     @Transactional
     public void arriveOrder(long id) throws IllegalOrderException, OrderNotFoundException {
-        validateOrderId(id);
+        Order order = validateOrderIdAndGetOrder(id).get();
 
-        if (!orderRepo.findById(id).get().isDeparted()) {
-            throw new IllegalOrderException(OrderStatus.NOT_ALLOWED_TO_BE_ARRIVED.toString());
-        }
+        if (!order.isDeparted()) throw new IllegalOrderException(OrderStatus.NOT_ALLOWED_TO_BE_ARRIVED.toString());
+        else if (order.isArrived()) throw new IllegalOrderException(OrderStatus.ARRIVED.toString());
 
         orderRepo.arriveOrder(id);
     }
 
-    private void validateOrderId(long id) {
+    private Optional<Order> validateOrderIdAndGetOrder(long id) {
         Optional<Order> order = orderRepo.findById(id);
 
-        if (order.isPresent()) {
-            if (order.get().isCanceled()) throw new IllegalOrderException(OrderStatus.CANCELED.toString());
-            if (order.get().isDeparted()) throw new IllegalOrderException(OrderStatus.DEPARTED.toString());
-            if (order.get().isArrived()) throw new IllegalOrderException(OrderStatus.ARRIVED.toString());
-        } else throw new OrderNotFoundException();
+        if (order.isEmpty()) throw new OrderNotFoundException();
+        if (order.get().isCanceled()) throw new IllegalOrderException(OrderStatus.CANCELED.toString());
+
+        return order;
     }
 
 }
