@@ -1,5 +1,6 @@
 package com.szincho.kimhyungjunproject.Order.DTO.Exception;
 
+import com.szincho.kimhyungjunproject.Food.Exception.FoodNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -33,5 +34,14 @@ public class OrderExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
+
+    @ExceptionHandler(FoodNotFoundException.class)
+    public ResponseEntity<Object> handleOfFoodNotFoundException(FoodNotFoundException e) {
+        HashMap<String, Object> body = new HashMap<>();
+        body.put("error", e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
 
 }
