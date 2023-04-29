@@ -33,7 +33,7 @@ public class OrderService {
     @Transactional
     public OrderResponse saveOrder(Order order, HashMap<Integer, Integer> CountWithFoodMap) throws FoodNotFoundException {
         validateOrderFoods(order, CountWithFoodMap);
-        return OrderResponseMapper.MAPPER.toDto(orderRepo.save(order), CountWithFoodMap);
+        return OrderResponseMapper.MAPPER.toDtoByCountWithFoodMap(orderRepo.save(order), CountWithFoodMap);
     }
 
     private void validateOrderFoods(Order order, HashMap<Integer, Integer> CountWithFoodMap) throws FoodNotFoundException {

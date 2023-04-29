@@ -30,12 +30,15 @@ public interface OrderResponseMapper extends DataMapper<OrderResponse, Order> {
                 .collect(Collectors.toList());
     }
 
-    @AfterMapping
-    default void afterMapping(@MappingTarget OrderResponse dto) {
-        int totalPrice = 0;
-        for (OrderFoodResponse food : dto.getFoods()) totalPrice += food.getPrice() * food.getCount();
+    default HashMap<Integer, Integer> getCountWithFoodMap(List<Food> foods) {
+        HashMap<Integer, Integer> countsWithFood = new HashMap<>();
 
-        dto.setTotalPrice(totalPrice);
+        for (Food orderedFood : foods) {
+            int count = countsWithFood.getOrDefault(orderedFood.getId(), 0);
+            countsWithFood.put(orderedFood.getId(), count + 1);
+        }
+
+        return countsWithFood;
     }
 
     default OrderFoodResponse toOrderResponse(Food food, int count) {
@@ -46,24 +49,20 @@ public interface OrderResponseMapper extends DataMapper<OrderResponse, Order> {
                 .build();
     }
 
-    default HashMap<Integer, Integer> getCountWithFoodMap(List<Food> foods) {
-        HashMap<Integer, Integer> countsWithFood = new HashMap<>();
+    @AfterMapping
+    default void afterMapping(@MappingTarget OrderResponse dto) {
+        int totalPrice = 0;
+        for (OrderFoodResponse food : dto.getFoods()) totalPrice += food.getPrice() * food.getCount();
 
-        for (Food orderedFood : foods) {
-            int count = countsWithFood.getOrDefault(orderedFood.getId(), 0);
-
-            countsWithFood.put(orderedFood.getId(), count + 1);
-        }
-        return countsWithFood;
+        dto.setTotalPrice(totalPrice);
     }
 
-    default OrderResponse toDto(Order order, HashMap<Integer, Integer> countsWithFood) {
+
+    default OrderResponse toDtoByCountWithFoodMap(Order order, HashMap<Integer, Integer> countsWithFood) {
         OrderResponse response = OrderFoodResponse(order, countsWithFood);
 
         int totalPrice = 0;
-        for (OrderFoodResponse food : response.getFoods()) {
-            totalPrice += food.getPrice() * food.getCount();
-        }
+        for (OrderFoodResponse food : response.getFoods()) totalPrice += food.getPrice() * food.getCount();
 
         response.setTotalPrice(totalPrice);
         response.setDestination(order.getDestination());
@@ -84,6 +83,5 @@ public interface OrderResponseMapper extends DataMapper<OrderResponse, Order> {
 
         return response;
     }
-
 
 }
