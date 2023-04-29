@@ -25,4 +25,8 @@ public class Order {
     @ManyToMany
     @JoinColumn(name = "food_id")
     List<Food> foods;
+
+    boolean isArrived;
+    boolean isDeparted;
+    boolean isCanceled;
 }
