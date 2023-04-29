@@ -27,6 +27,10 @@ public class FoodService {
                 .collect(Collectors.toList());
     }
 
+    public List<Food> getAllByIds(List<Integer> ids) {
+        return repo.findAllById(ids);
+    }
+
     public FoodDTO getFood(int id) throws FoodNotFoundException {
         validateFoodExists(id);
         return mapper.toDto(repo.findById(id).get());
