@@ -8,6 +8,11 @@ import com.szincho.kimhyungjunproject.Order.DTO.Mapper.OrderRequestMapper;
 import com.szincho.kimhyungjunproject.Order.DTO.Request.OrderRequest;
 import com.szincho.kimhyungjunproject.Order.DTO.Response.OrderResponse;
 import com.szincho.kimhyungjunproject.Order.Entity.Order;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +22,8 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 
+@Tag(name = "Order", description = "주 관련 API")
+@Api(tags = "Order")
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -32,6 +39,11 @@ public class OrderController {
         this.mapper = mapper;
     }
 
+    @Operation(summary = "주문요청", tags = "Order")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "주문성공"),
+            @ApiResponse(responseCode = "404", description = "주문음식 ID가 존재하지 않을때")
+    })
     @PostMapping
     public ResponseEntity<OrderResponse> receiveOrder(@RequestBody @Valid OrderRequest request) throws FoodNotFoundException {
         HashMap<Integer, Integer> CountWithFoodMap = mapper.getCountWithFoodMap(request);
@@ -43,6 +55,10 @@ public class OrderController {
                 .body(response);
     }
 
+    @Operation(summary = "주문내역조회", tags = "Order")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공적으로 처리(배달)된 주문의 목록을 조회")
+    })
     @GetMapping
     public List<OrderResponse> getAllOrderHistory() {
         return service.getAllOrderHistoryDESC();

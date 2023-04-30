@@ -2,6 +2,11 @@ package com.szincho.kimhyungjunproject.Food;
 
 import com.szincho.kimhyungjunproject.Food.DTO.FoodDTO;
 import com.szincho.kimhyungjunproject.Food.Exception.FoodNotFoundException;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name = "Food", description = "음식 정보 관련 API")
+@Api(tags = "Food")
 @RestController
 @RequestMapping("/foods")
 public class FoodController {
@@ -23,6 +30,10 @@ public class FoodController {
         this.mapper = mapper;
     }
 
+    @Operation(summary = "전체 음식 정보 조회", tags = "Food")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회성공")
+    })
     @GetMapping
     public List<FoodDTO> getAllFoods() {
         return service.getAllFoods();
