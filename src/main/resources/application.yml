@@ -5,6 +5,10 @@ spring:
     username: root
     password: root
 
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
   http:
     encoding:
       charset=UTF-8:
@@ -19,6 +23,14 @@ spring:
         connection:
           characterEncoding: utf8
           useUnicode: true
+
+  springfox:
+    documentation:
+      enabled: true
+    swagger-ui:
+      enabled: true
+    swagger:
+      enabled: true
 
 logging:
   level:
