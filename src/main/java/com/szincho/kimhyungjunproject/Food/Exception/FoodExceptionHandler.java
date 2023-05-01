@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@ControllerAdvice
+@ControllerAdvice(basePackages = "com.szincho.kimhyungjunproject.Food")
 public class FoodExceptionHandler {
 
     @ExceptionHandler(FoodNotFoundException.class)
