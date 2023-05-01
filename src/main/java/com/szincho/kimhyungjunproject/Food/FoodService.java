@@ -1,47 +1,59 @@
 package com.szincho.kimhyungjunproject.Food;
 
+import com.szincho.kimhyungjunproject.Food.DTO.FoodDTO;
 import com.szincho.kimhyungjunproject.Food.Entity.Food;
+import com.szincho.kimhyungjunproject.Food.Exception.FoodNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FoodService {
 
-    FoodRepository repo;
+    private final FoodRepository repo;
+    private final FoodMapper mapper;
 
     @Autowired
-    public FoodService(FoodRepository repo) {
+    public FoodService(FoodRepository repo, FoodMapper mapper) {
         this.repo = repo;
+        this.mapper = mapper;
     }
 
-    public List<Food> getAllFoods() {
-        return repo.findAll();
+    public List<FoodDTO> getAllFoods() {
+        return repo.findAll().stream().map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Food> getFood(int id) {
-        return repo.findById(id);
+    public FoodDTO getFood(int id) throws FoodNotFoundException {
+        validateFoodExists(id);
+        return mapper.toDto(repo.findById(id).get());
     }
 
-    public Food saveFood(Food food) {
-        return repo.save(food);
+    public FoodDTO saveFood(Food food) {
+        return mapper.toDto(repo.save(food));
     }
 
     @Transactional
-    public Optional<Food> updateFood(int id, Food target) {
-        return getFood(id).map(origin -> origin.updateFields(target));
+    public FoodDTO updateFood(int id, Food target) throws FoodNotFoundException {
+        validateFoodExists(id);
+
+        target = new Food(id, target.getName(), target.getPrice(), target.getDescription());
+
+        return saveFood(target);
     }
 
     @Transactional
-    public boolean deleteFood(int id) {
-        Optional<Food> food = repo.findById(id);
-        if (food.isEmpty()) return false;
+    public void deleteFood(int id) throws FoodNotFoundException {
+        validateFoodExists(id);
 
         repo.deleteById(id);
-        return true;
+    }
+
+    private void validateFoodExists(int id) throws FoodNotFoundException {
+        if (!repo.existsById(id)) throw new FoodNotFoundException(id);
     }
 
 }
